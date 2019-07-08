@@ -159,15 +159,15 @@ def download_resize_clean(index):
         logger.error(f'FAILED TO PROCESS {images_file_name}')
 
 
-def extract_to_root(images_folder):
-    move_images_from_sub_to_root_folder(images_folder, images_folder)
-    remove_all_subfolders_inside_folder(images_folder)
+# def extract_to_root(images_folder):
+#     move_images_from_sub_to_root_folder(images_folder, images_folder)
+#     remove_all_subfolders_inside_folder(images_folder)
 
 
 logger = create_logger('download.log')
 
-
-extract_to_root('trainset')
+#
+# extract_to_root('trainset')
 p = Pool(processes=6)
 p.map(download_resize_clean, range(500))
 p.close()
