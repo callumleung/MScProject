@@ -107,6 +107,7 @@ def resize_contain(image, size, resample=Image.LANCZOS, bg_color=(255, 255, 255,
     background.format = img_format
     return background.convert('RGB')
 
+
 def download_resize_clean(index):
     try:
         if not os.path.exists('train'):
@@ -167,6 +168,6 @@ logger = create_logger('download.log')
 
 
 extract_to_root('trainset')
-#p = Pool(processes=6)
-#p.map(download_resize_clean, range(500))
-#p.close()
+p = Pool(processes=6)
+p.map(download_resize_clean, range(500))
+p.close()
