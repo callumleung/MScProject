@@ -169,6 +169,6 @@ logger = create_logger('download.log')
 
 #
 # extract_to_root('trainset')
-p = Pool(processes=1)
+p = Pool(processes=6)
 p.map(download_resize_clean, range(500))
 p.close()
