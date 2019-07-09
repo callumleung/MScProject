@@ -43,8 +43,6 @@ def move_images_from_sub_to_root_folder(root_folder, subfolder):
     for image in images:
         path_to_image = os.path.join(subfolder, image)
         root_image = os.path.join(root_folder, image)
-        logger.debug(path_to_image)
-        logger.debug(root_image)
         shutil.move(path_to_image, root_image)
 
 
