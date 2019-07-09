@@ -42,7 +42,7 @@ def move_images_from_sub_to_root_folder(root_folder, subfolder):
     images = [i for i in subfolder_content if i not in folders_in_subfolder]
     for image in images:
         path_to_image = os.path.join(subfolder, image)
-        shutil.move({path_to_image}, root_folder/image)
+        shutil.move(path_to_image, root_folder/image)
 
 
 def remove_all_subfolders_inside_folder(folder):
@@ -168,6 +168,6 @@ logger = create_logger('download.log')
 
 #
 # extract_to_root('trainset')
-p = Pool(processes=6)
+p = Pool(processes=1)
 p.map(download_resize_clean, range(500))
 p.close()
