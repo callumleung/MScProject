@@ -152,7 +152,7 @@ def download_resize_clean(index):
                 size=224
             )
             os.system(f'rm -r {images_folder}')
-            os.system(f'rm {images_file_name}')
+            os.system(f'rm -rf {images_file_name}')
             os.system(f'rm {images_md5_file_name}')
         else:
             logger.error(f'{images_file_name} was not processed due to md5 missmatch')
