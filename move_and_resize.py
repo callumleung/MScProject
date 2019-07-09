@@ -51,7 +51,7 @@ def remove_all_subfolders_inside_folder(folder):
     subfolders = [i for i in folder_content if os.path.isdir(os.path.join(folder, i))]
     for subfolder in subfolders:
         path_to_subfolder = os.path.join(folder, subfolder)
-        os.system(f'rm -r {path_to_subfolder}')
+        os.system('rm -r {}'.format(path_to_subfolder))
 
 
 def resize_folder_images(src_dir, dst_dir, size=224):
@@ -69,7 +69,7 @@ def resize_folder_images(src_dir, dst_dir, size=224):
             new_img = new_img.convert("RGB")
             new_img.save(dst_filepath)
             count += 1
-    logger.debug(f'{src_dir} files resized: {count}')
+    logger.debug('{} files resized: {}'.format(src_dir, count))
 
 
 def read_and_resize_image(filepath, size):
@@ -77,6 +77,7 @@ def read_and_resize_image(filepath, size):
     if img:
         img = resize_image(img, size)
     return img
+
 
 def resize_image(img, size):
     if type(size) == int:
@@ -115,17 +116,17 @@ def download_resize_clean(index):
             os.system('mkdir train')
 
         file_index = '{0:0>3}'.format(index)
-        images_file_name = f'images_{file_index}.tar'
+        images_file_name = 'images_{}.tar'.format(file_index)
         images_folder = images_file_name.split('.')[0]
-        images_md5_file_name = f'md5.images_{file_index}.txt'
-        images_tar_url = f'https://s3.amazonaws.com/google-landmark/train/{images_file_name}'
-        images_md5_url = f'https://s3.amazonaws.com/google-landmark/md5sum/train/{images_md5_file_name}'
+        images_md5_file_name = 'md5.images_{}.txt'.format(file_index)
+        images_tar_url = 'https://s3.amazonaws.com/google-landmark/train/{}'.format(images_file_name)
+        images_md5_url = 'https://s3.amazonaws.com/google-landmark/md5sum/train/{}'.format(images_md5_file_name)
 
-        logger.info(f'Downloading: {images_file_name} and {images_md5_file_name}')
-        os.system(f'wget {images_tar_url}')
-        os.system(f'wget {images_md5_url}')
+        logger.info('Downloading: {} and {}'.format(images_file_name, images_md5_file_name))
+        os.system('wget {}'.format(images_tar_url))
+        os.system('wget {}'.format(images_md5_url))
 
-        logger.debug(f'Checking file md5 and control md5')
+        logger.debug('Checking file md5 and control md5')
         p = subprocess.Popen(
             ["md5sum", images_file_name],
             stdout=subprocess.PIPE,
@@ -136,28 +137,28 @@ def download_resize_clean(index):
         md5_control = open(images_md5_file_name).read().split(' ')[0]
 
         if md5_images == md5_control:
-            logger.debug(f'MD5 are the same: {md5_images}, {md5_control}')
-            logger.debug(f'Unarchiving images into: {images_folder}')
-            os.system(f'mkdir {images_folder}')
-            os.system(f'tar -xf {images_file_name} -C ./{images_folder}/')
+            logger.debug('MD5 are the same: {}, {}'.format(md5_images, md5_control))
+            logger.debug('Unarchiving images into: {}'.format(images_folder))
+            os.system('mkdir {}'.format(images_folder))
+            os.system('tar -xf {} -C ./{}/'.format(images_file_name, images_folder))
 
-            logger.debug(f'Moving images into root folder')
+            logger.debug('Moving images into root folder')
             move_images_from_sub_to_root_folder(images_folder, images_folder)
             remove_all_subfolders_inside_folder(images_folder)
 
-            logger.debug(f'Resizing images')
+            logger.debug('Resizing images')
             resize_folder_images(
                 src_dir=images_folder,
                 dst_dir='train',
                 size=224
             )
-            os.system(f'rm -r {images_folder}')
-            os.system(f'rm -rf {images_file_name}')
-            os.system(f'rm {images_md5_file_name}')
+            os.system('rm -r {}'.format(images_folder))
+            os.system('rm -rf {}'.format(images_file_name))
+            os.system('rm {}'.format(images_md5_file_name))
         else:
-            logger.error(f'{images_file_name} was not processed due to md5 missmatch')
+            logger.error('{} was not processed due to md5 missmatch'.format(images_file_name))
     except:
-        logger.error(f'FAILED TO PROCESS {images_file_name}')
+        logger.error('FAILED TO PROCESS {}'.format(images_file_name))
 
 
 # def extract_to_root(images_folder):
