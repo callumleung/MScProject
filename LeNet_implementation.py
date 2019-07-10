@@ -57,7 +57,7 @@ def generate_csv_n_examples(min_number_examples, n_examples_csv, source_csv):
     example_counts = images_csv.groupby('landmark_id').count()
     example_counts = example_counts[example_counts.id >= min_number_examples]
     # separate the landmark id from the rest of the data
-    example_counts = example_counts.index
+    example_counts = example_counts.index.values
 
     #  Get landmark id for current row, attempt to add to id to new dataframe (id, count),
     #  if already exists incrememnt count
