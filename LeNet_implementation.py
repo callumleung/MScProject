@@ -5,9 +5,10 @@ import pathlib
 import csv
 import pandas as pd
 
-resized_image_dir = pathlib.Path("E:\\Documents\\CompSci\\project\\trainset\\resized")
-csv_file = "train.csv"
-batch_csv_file = "trainset\\resized\\trial_batch_ids.csv"
+#  resized_image_dir = pathlib.Path("E:\\Documents\\CompSci\\project\\trainset\\resized")
+train_csv = "train.csv"
+n_examples_file = "20_examples.csv"
+# batch_csv_file = "trainset\\resized\\trial_batch_ids.csv"
 
 # Get the number of images in the data set
 def get_number_images(data_dir):
@@ -43,10 +44,31 @@ def create_resized_batch_csv(csv_file, batch_dir, batch_csv_file):
 
 # create_resized_batch_csv(csv_file, resized_image_dir, batch_csv_file)
 
-batch_landmarks_ids = pd.read_csv(batch_csv_file)
-batch_landmarks_ids.groupby('landmark_id').count()
+# batch_landmarks_ids = pd.read_csv(batch_csv_file)
+# batch_landmarks_ids.groupby('landmark_id').count()
 
 
+def generate_csv_n_examples(min_number_examples, n_examples_csv, source_csv):
+    df_min_20 = pd.DataFrame()
+
+    images_csv = pd.read_csv(source_csv)
+
+    # Get all landmark ids that have at least 20 examples
+    example_counts = images_csv.groupby('landmark_id').count()
+    example_counts = example_counts[example_counts.id >= min_number_examples]
+    # separate the landmark id from the rest of the data
+    example_counts = example_counts.index
+
+    #  Get landmark id for current row, attempt to add to id to new dataframe (id, count),
+    #  if already exists incrememnt count
+    for index, row in images_csv.iterrows():
+        if example_counts.contains(row.landmark_id):
+            df_min_20.append(row)
+
+    df_min_20.to_csv(n_examples_csv, index=None)
+
+
+generate_csv_n_examples(20, n_examples_file, train_csv)
 
 
 
