@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import os
-import pathlib
+# import pathlib
 import csv
 import pandas as pd
 
@@ -62,13 +62,13 @@ def generate_csv_n_examples(min_number_examples, n_examples_csv, source_csv):
     #  Get landmark id for current row, attempt to add to id to new dataframe (id, count),
     #  if already exists incrememnt count
     for index, row in images_csv.iterrows():
-        if example_counts.contains(row.landmark_id):
-            df_min_20.append(row['landmark_id'])
+        if row['landmark_id'] in example_counts:
+            df_min_20.append(row)
 
     df_min_20.to_csv(n_examples_csv, index=None)
 
 
-# generate_csv_n_examples(20, n_examples_file, train_csv)
+generate_csv_n_examples(20, n_examples_file, train_csv)
 
 
 
