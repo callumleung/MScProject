@@ -1,4 +1,4 @@
-!#/bin/bash
+#!/bin/bash
 
 #$ -cwd -V
 #Â$-l h_rt=3:59:59

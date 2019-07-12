@@ -63,9 +63,11 @@ def generate_csv_n_examples(min_number_examples, n_examples_csv, source_csv):
     #  if already exists incrememnt count
     for index, row in images_csv.iterrows():
         if row['landmark_id'] in example_counts:
-            df_min_20.append(row)
+            df_min_20 = df_min_20.append(row)
 
-    df_min_20.to_csv(n_examples_csv, index=None)
+    outfile = open(n_examples_csv, 'wb')	
+    df_min_20.to_csv(outfile, index=None)
+    outfile.close()    
 
 
 generate_csv_n_examples(20, n_examples_file, train_csv)
