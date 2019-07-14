@@ -57,17 +57,21 @@ def generate_csv_n_examples(min_number_examples, n_examples_csv, source_csv):
     example_counts = images_csv.groupby('landmark_id').count()
     example_counts = example_counts[example_counts.id >= min_number_examples]
     # separate the landmark id from the rest of the data
-    example_counts = example_counts.index.values
+    example_indexes = example_counts.index.values
 
     #  Get landmark id for current row, attempt to add to id to new dataframe (id, count),
     #  if already exists incrememnt count
-    for index, row in images_csv.iterrows():
-        if row['landmark_id'] in example_counts:
-            df_min_20 = df_min_20.append(row)
+    # for index, row in images_csv.iterrows():
+    #     if index % 50 == 0:
+    #         print(index)
+    #     if row['landmark_id'] in example_counts:
+    #         df_min_20 = df_min_20.append(row)
 
-    outfile = open(n_examples_csv, 'wb')	
-    df_min_20.to_csv(outfile, index=None)
-    outfile.close()    
+    df_min_20 = images_csv[images_csv['landmark_id'].isin(example_indexes)]
+
+    # outfile = open(n_examples_csv, 'wb')
+    df_min_20.to_csv(n_examples_csv, index=None)
+    # outfile.close()
 
 
 generate_csv_n_examples(20, n_examples_file, train_csv)
