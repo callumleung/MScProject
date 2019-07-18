@@ -40,13 +40,13 @@ def load_images(images_csv_path, images_path):
     all_images_list = pd.DataFrame(os.listdir(images_path), columns=['file'])
     # remove file extensions to get image id
     for index, row in all_images_list.iterrows():
-        row['file'].replace('.jpg', '')
+        row['file'] = row['file'].replace('.jpg', '')
     # all_images_id = [id.replace('.jpg', '') for id in all_images_list['file']]
 
     images_to_load = all_images_list[all_images_list.isin(images_to_load_csv['id'])]
 
     for index, row in all_images_list.iterrows():
-        row['file']+'.jpg'
+        row['file'] = row['file']+'.jpg'
 
     # reattach file extension to load in images
     # all_images_id_extension = [id.append('.jpg') for id in images_to_load]
@@ -121,7 +121,11 @@ Y = tf.placeholder("float", [None, num_classes])
 p_keep_conv = tf.placeholder("float")
 p_keep_hidden = tf.placeholder("float")
 
-trainX, trainY, testX, testY = sk.train_test_split(images, labels, test_size=0.25, random_state=42)
+# Labels need to be coded
+labels_ = np.zeros((images.shape[0], labels))
+labels_[np.arange(images.shape[0]), labels] = 1
+
+trainX, trainY, testX, testY = sk.train_test_split(images, labels_, test_size=0.25, random_state=42)
 
 
 
