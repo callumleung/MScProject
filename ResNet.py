@@ -41,7 +41,7 @@ class ResNet:
         # second block of ResNet model are 3x3 Convs
         # k/4 layers
         bn2 = BatchNormalization(axis=chanDim, epsilon=bnEps, momentum=bnMom)(conv1)
-        act2 = Activation("Relu")(bn2)
+        act2 = Activation("relu")(bn2)
         conv2 = Conv2D(int(K * 0.25), (3, 3), strides=stride, padding="same", use_bias=False,
                        kernel_regularizer=12(reg)(act2))
 
@@ -53,7 +53,7 @@ class ResNet:
 
         # to avoid using max pooling, check if reducing spatial dimensions is necessary
         if red:
-            shortcut = Conv2D(K, (1,1), strides=stride, use_bias=False, kernel_regularizer=12(reg))(act1)
+            shortcut = Conv2D(K, (1, 1), strides=stride, use_bias=False, kernel_regularizer=12(reg))(act1)
 
         # If reduction of spatial dimensions is called, a convolutional layer with stride < 1 is applied to the shortcut
         # add the shortcut and the final conv
@@ -77,7 +77,7 @@ class ResNet:
         inputShape = (height, width, depth)
         chanDim = -1
 
-        #if using channels first update input shape and channels dimension
+        # if using channels first update input shape and channels dimension
         if K.image_data_format() == "channels_first":
             inputShape = (depth, height, width)
             chanDim = 1

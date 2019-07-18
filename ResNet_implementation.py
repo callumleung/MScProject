@@ -2,6 +2,11 @@ import pandas as pd
 import tensorflow as tf
 import os
 import logging 
+import ResNet
+import sklearn.model_selection as sk
+import numpy as np
+
+
 
 def create_logger(filename,
                   logger_name='logger',
@@ -36,7 +41,7 @@ def load_images(images_csv_path, images_path):
     # remove file extensions to get image id
     all_images_id = [id.replace('.jpg', '') for id in all_images_list]
 
-    images_to_load = [all_images_id.isin(images_to_load_csv['id'])]
+    images_to_load = all_images_id[all_images_id.isin(images_to_load_csv['id'])]
 
     # reattach file extension to load in images
     all_images_id_extension = [id.append('.jpg') for id in images_to_load]
@@ -71,16 +76,52 @@ def copy_chosen_images(images_csv_path, images_path):
         logger.debug('moving {}'.format(image))
 
 
+def get_classes(data_csv):
+    # Get all landmark ids that have at least 20 examples
+    example_counts = data_csv.groupby('landmark_id').count()
+    # separate the landmark id from the rest of the data
+    example_indexes = example_counts.index.values
+    return example_indexes
+
 logger = create_logger('move_selected_images.log')
 reduced_csv = "20_examples.csv/"
+data_csv = pd.read_csv(reduced_csv)
 images_folder = "train/"
-copy_chosen_images(reduced_csv, images_folder)
+# copy_chosen_images(reduced_csv, images_folder)
+labels = get_classes(data_csv)
+images = load_images(reduced_csv, images_folder)
+
+num_classes = 52584  # remove hardcoded number, use unique values in reduced csv
+stages = (3, 4, 6)
+filters = (64, 128, 256, 512)
+
+# Set parameters for learning
+batch_size = 128
+# test_size = 256
+img_size = 224
+
+# Placeholder variable for input images
+# Shape is [None, img_size, img_size, 1]
+# None specifies that the tensor can hold an arbitrary number of images
+X = tf.placeholder("float", [None, img_size, img_size, 1])
+
+# Placeholder Y for the labels associated correctly with input images in placeholder X
+# Shape is [None, num_classes]
+# None specifies that the tensor can hold an arbitrary number of labels, each of length num_classes
+Y = tf.placeholder("float", [None, num_classes])
+
+p_keep_conv = tf.placeholder("float")
+p_keep_hidden = tf.placeholder("float")
+
+trainX, trainY, testX, testY = sk.train_test_split(images, labels, test_size=0.25, random_state=42)
+
+
 
 # split data into train and test set
 # Measure performance using cross entropy. Alwyas positive and equal to 0 if predicted == output.
 # Want to minimise the cross-entropy by changing layer variables
 # Cross-entropy function calculates softmax internally so use output of model(...) directly
-py_x = ResNet
+py_x = ResNet.ResNet.build(img_size, img_size, 3, num_classes, stages, filters)
 # Define cross entropy for each image
 Y_ = tf.nn.softmax_cross_entropy_with_logits_v2(labels=Y, logits=py_x)
 
@@ -116,7 +157,7 @@ with tf.Session() as sesh:
         # At the same time get a shuffled batch of test samples
         test_indices = np.arange(len(testX))
         np.random.shuffle(test_indices)
-        test_indices = test_indices[0:test_size]
+        test_indices = test_indices[0:len(testX)]
 
         # For each iteration, display the accuracy of the batch
         print(i, np.mean(np.argmax(testY[test_indices], axis=1) == sesh.run(predict_op,
