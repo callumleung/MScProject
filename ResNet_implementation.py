@@ -2,6 +2,7 @@ import pandas as pd
 import tensorflow as tf
 import pathlib
 import os
+import ResNet
 
 def create_logger(filename,
                   logger_name='logger',
@@ -68,9 +69,60 @@ def copy_chosen_images(images_csv_path, images_path):
 
 
 logger = create_logger('move_selected_images.log')
-reduced_csv = "20_examples.csv"
-images_folder = "train"
+reduced_csv = "20_examples.csv/"
+images_folder = "train/"
 copy_chosen_images(reduced_csv, images_folder)
+
+# split data into train and test set
+# Measure performance using cross entropy. Alwyas positive and equal to 0 if predicted == output.
+# Want to minimise the cross-entropy by changing layer variables
+# Cross-entropy function calculates softmax internally so use output of model(...) directly
+py_x = ResNet
+# Define cross entropy for each image
+Y_ = tf.nn.softmax_cross_entropy_with_logits_v2(labels=Y, logits=py_x)
+
+# Take average of cross entropy for all classified images to find single scalar value to optimise network variables
+cost = tf.reduce_mean(Y_)
+
+# Use optimiser to minimise the above cost.
+# Using RMSProp algorithm. Algo also divides the learning rate by exponentially decaying average of squared gradients
+# Suggested decay param 0.9, learning rate 0.001
+optimiser = tf.train.RMSPropOptimizer(0.001, 0.9).minimize(cost)
+
+# define predict_opm, the index with the largest value across dimensions from the output
+predict_op = tf.argmax(py_x, 1)
+
+# Define networks running section
+# Perform in batches
+
+# implement Tensorflow session
+with tf.Session() as sesh:
+    tf.global_variables_initializer().run()
+    for i in range(100):
+        # Get small batch of training examples that holds images and corresponding labels
+        training_batch = zip(range(0, len(trainX), batch_size), range(batch_size, len(trainX)+1, batch_size))
+
+        # Put batch into a feed_dict with appropriate names for placeholders in the graph
+        # Run optimiser using this batch of training data
+        for start, end in training_batch:
+            sesh.run(optimiser, feed_dict={X: trainX[start:end],
+                                           Y: trainY[start:end],
+                                           p_keep_conv: 0.8,
+                                           p_keep_hidden: 0.5})
+
+        # At the same time get a shuffled batch of test samples
+        test_indices = np.arange(len(testX))
+        np.random.shuffle(test_indices)
+        test_indices = test_indices[0:test_size]
+
+        # For each iteration, display the accuracy of the batch
+        print(i, np.mean(np.argmax(testY[test_indices], axis=1) == sesh.run(predict_op,
+                                                                            feed_dict={X: testX[test_indices],
+                                                                                       Y: testY[test_indices],
+                                                                                       p_keep_conv: 1.0,
+                                                                                       p_keep_hidden: 1.0})))
+
+
 
 
 
