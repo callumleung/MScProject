@@ -1,4 +1,4 @@
-from keras.layers.normalisation import BatchNormalization
+from keras.layers.normalization import BatchNormalization
 from keras.layers.convolutional import Conv2D
 from keras.layers.convolutional import AveragePooling2D
 from keras.layers.convolutional import MaxPooling2D

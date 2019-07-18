@@ -37,16 +37,24 @@ def load_images(images_csv_path, images_path):
     images_to_load_csv = pd.read_csv(images_csv_path)
 
     # create list of all files
-    all_images_list = os.listdir(images_path)
+    all_images_list = pd.DataFrame(os.listdir(images_path), columns=['file'])
     # remove file extensions to get image id
-    all_images_id = [id.replace('.jpg', '') for id in all_images_list]
+    for index, row in all_images_list.iterrows():
+        row['file'].replace('.jpg', '')
+    # all_images_id = [id.replace('.jpg', '') for id in all_images_list['file']]
 
-    images_to_load = all_images_id[all_images_id.isin(images_to_load_csv['id'])]
+    images_to_load = all_images_list[all_images_list.isin(images_to_load_csv['id'])]
+
+    for index, row in all_images_list.iterrows():
+        row['file']+'.jpg'
 
     # reattach file extension to load in images
-    all_images_id_extension = [id.append('.jpg') for id in images_to_load]
+    # all_images_id_extension = [id.append('.jpg') for id in images_to_load]
 
-    images = [tf.read_file(images_path/file) for file in all_images_id_extension]
+    #images = [tf.read_file(images_path/file) for file in all_images_id_extension]
+    images = pd.DataFrame()   
+    for index, row in all_images_list.iterrows():
+        images.add(tf.read_file('{}/{}'.format(images_path, row['file'])))
     return images
 
 
@@ -84,9 +92,9 @@ def get_classes(data_csv):
     return example_indexes
 
 logger = create_logger('move_selected_images.log')
-reduced_csv = "20_examples.csv/"
+reduced_csv = "20_examples.csv"
 data_csv = pd.read_csv(reduced_csv)
-images_folder = "train/"
+images_folder = "train"
 # copy_chosen_images(reduced_csv, images_folder)
 labels = get_classes(data_csv)
 images = load_images(reduced_csv, images_folder)
