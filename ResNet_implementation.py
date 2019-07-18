@@ -1,7 +1,7 @@
 import pandas as pd
 import tensorflow as tf
-import pathlib
 import os
+import logging 
 
 def create_logger(filename,
                   logger_name='logger',
@@ -50,15 +50,19 @@ def copy_chosen_images(images_csv_path, images_path):
 
     # create list of all files
     all_images_list = os.listdir(images_path)
+    logger.debug('getting list of images')
     # remove file extensions to get image id
     all_images_id = [id.replace('.jpg', '') for id in all_images_list]
-
+    logger.debug('removing .jpg to get image id')
+    logger.debug('creating list of selected images')
     images_to_load = [all_images_id.isin(images_to_load_csv['id'])]
-
+   
+    logger.debug('reconstructing file extension')
     # reattach file extension to load in images
     all_images_id_extension = [id.append('.jpg') for id in images_to_load]
 
     # move files listed in all_images_id_extension to new folder
+    logger.debug('checking if directory exists')
     if not os.path.exists('reduced_dataset'):
         os.system('mkdir reduced_dataset')
 
