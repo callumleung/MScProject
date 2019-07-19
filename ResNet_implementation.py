@@ -96,8 +96,11 @@ reduced_csv = "20_examples.csv"
 data_csv = pd.read_csv(reduced_csv)
 images_folder = "train"
 # copy_chosen_images(reduced_csv, images_folder)
-labels = get_classes(data_csv)
-images = load_images(reduced_csv, images_folder)
+# labels = get_classes(data_csv)
+# labels = labels.reshape((1, -1))
+# images = load_images(reduced_csv, images_folder)
+labels = data_csv['landmark_ids']
+
 
 num_classes = 52584  # remove hardcoded number, use unique values in reduced csv
 stages = (3, 4, 6)
