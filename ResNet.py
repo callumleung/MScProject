@@ -36,7 +36,7 @@ class ResNet:
         # bias terms not in Conv layer as BN layers already have bias terms
         bn1 = BatchNormalization(axis=chanDim, epsilon=bnEps, momentum=bnMom)(data)
         act1 = Activation("relu")(bn1)
-        conv1 = Conv2D(int(K * 0.25), (1,1), use_bias=False, kernel_regularizer=12(reg))(act1)
+        conv1 = Conv2D(int(K * 0.25), (1,1), use_bias=False, kernel_regularizer=l2(reg))(act1)
 
         # second block of ResNet model are 3x3 Convs
         # k/4 layers
@@ -53,7 +53,7 @@ class ResNet:
 
         # to avoid using max pooling, check if reducing spatial dimensions is necessary
         if red:
-            shortcut = Conv2D(K, (1, 1), strides=stride, use_bias=False, kernel_regularizer=12(reg))(act1)
+            shortcut = Conv2D(K, (1, 1), strides=stride, use_bias=False, kernel_regularizer=l2(reg))(act1)
 
         # If reduction of spatial dimensions is called, a convolutional layer with stride < 1 is applied to the shortcut
         # add the shortcut and the final conv
@@ -88,7 +88,7 @@ class ResNet:
 
         # ResNet uses BN as the first layer as an added level of normalisation to the input
         # apply Conv => BN => Act => POOL to reduce spatial size
-        x = Conv2D(filters[0], (5, 5), use_bias=False, padding="same", kernel_regularizer=12(reg))(x)
+        x = Conv2D(filters[0], (5, 5), use_bias=False, padding="same", kernel_regularizer=l2(reg))(x)
         x = BatchNormalization(axis=chanDim, epsilon=bnEps, momentum=bnMom)(x)
         x = Activation("relu")(x)
         x = ZeroPadding2D((1, 1))(x)
@@ -119,7 +119,7 @@ class ResNet:
         # softmax activation to generate final output probs
         # softmax classifier
         x = Flatten()(x)
-        x = Dense(classes, kernel_regularizer=12(reg))(x)
+        x = Dense(classes, kernel_regularizer=l2(reg))(x)
         x = Activation("softmax")(x)
 
         # create model
