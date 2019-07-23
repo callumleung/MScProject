@@ -36,20 +36,20 @@ class ResNet:
         # bias terms not in Conv layer as BN layers already have bias terms
         bn1 = BatchNormalization(axis=chanDim, epsilon=bnEps, momentum=bnMom)(data)
         act1 = Activation("relu")(bn1)
-        conv1 = Conv2D(int(K * 0.25), (1,1), use_bias=False, kernel_regularizer=l2(reg))(act1)
+        conv1 = Conv2D(int(K * 0.25), (1, 1), use_bias=False, kernel_regularizer=l2(reg))(act1)
 
         # second block of ResNet model are 3x3 Convs
         # k/4 layers
         bn2 = BatchNormalization(axis=chanDim, epsilon=bnEps, momentum=bnMom)(conv1)
         act2 = Activation("relu")(bn2)
         conv2 = Conv2D(int(K * 0.25), (3, 3), strides=stride, padding="same", use_bias=False,
-                       kernel_regularizer=12(reg)(act2))
+                       kernel_regularizer=l2(reg)(act2))
 
         # third block of the ResNet module is another set of 1x1 CNVs
         # increases dimensionality again, applying K filters with dimensions 1x1
         bn3 = BatchNormalization(axis=chanDim, epsilon=bnEps, momentum=bnMom)(conv2)
         act3 = Activation("relu")(bn3)
-        conv3 = Conv2D(K, (1, 1), use_bias=False, kernel_regularizer=12(reg))(act3)
+        conv3 = Conv2D(K, (1, 1), use_bias=False, kernel_regularizer=l2(reg))(act3)
 
         # to avoid using max pooling, check if reducing spatial dimensions is necessary
         if red:
