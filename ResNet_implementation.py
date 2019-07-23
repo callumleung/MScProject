@@ -98,9 +98,11 @@ images_folder = "train"
 # copy_chosen_images(reduced_csv, images_folder)
 # labels = get_classes(data_csv)
 # labels = labels.reshape((1, -1))
-# images = load_images(reduced_csv, images_folder)
-labels = data_csv['landmark_ids']
-
+images = load_images(reduced_csv, images_folder)
+images = images.values.reshape((1, -1))
+# images = images.reshape((1,-1))
+labels = data_csv.landmark_id
+labels = labels.values.reshape((1, -1))
 
 num_classes = 52584  # remove hardcoded number, use unique values in reduced csv
 stages = (3, 4, 6)
@@ -125,10 +127,10 @@ p_keep_conv = tf.placeholder("float")
 p_keep_hidden = tf.placeholder("float")
 
 # Labels need to be coded
-labels_ = np.zeros((images.shape[0], labels))
-labels_[np.arange(images.shape[0]), labels] = 1
+# labels_ = np.zeros((images.shape[0], labels))
+# labels_[np.arange(images.shape[0]), labels] = 1
 
-trainX, trainY, testX, testY = sk.train_test_split(images, labels_, test_size=0.25, random_state=42)
+trainX, trainY, testX, testY = sk.train_test_split(images, labels, test_size=0.25, random_state=42)
 
 
 
