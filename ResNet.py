@@ -26,7 +26,7 @@ class ResNet:
     # applies regularisation strength for all Conv layers in the residual module
     # bnEps controls the epsilon responsible for avoiding division by zero errors when normlising
     # bnMom controls the momentum for the moving average
-    def residual_module(data, k, stride, chanDim, red=False, reg=0.0001, bnEps=2e-5, bnMom=0.9):
+    def residual_module(data, K, stride, chanDim, red=False, reg=0.0001, bnEps=2e-5, bnMom=0.9):
         # shortcut branch of the ResNet module should be initialised as the input data
         shortcut = data
 
