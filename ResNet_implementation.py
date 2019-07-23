@@ -4,6 +4,7 @@ import os
 import logging 
 import ResNet
 import sklearn.model_selection as sk
+from keras.utils import to_categorical, plot_model
 import numpy as np
 
 
@@ -138,50 +139,24 @@ trainX, trainY, testX, testY = sk.train_test_split(images, labels, test_size=0.2
 # Measure performance using cross entropy. Alwyas positive and equal to 0 if predicted == output.
 # Want to minimise the cross-entropy by changing layer variables
 # Cross-entropy function calculates softmax internally so use output of model(...) directly
-py_x = ResNet.ResNet.build(img_size, img_size, 3, num_classes, stages, filters)
-# Define cross entropy for each image
-Y_ = tf.nn.softmax_cross_entropy_with_logits_v2(labels=Y, logits=py_x)
+#py_x = ResNet.ResNet.build(img_size, img_size, 3, num_classes, stages, filters)
+model = ResNet.ResNet.build(img_size, img_size, 3, num_classes, stages, filters)
 
-# Take average of cross entropy for all classified images to find single scalar value to optimise network variables
-cost = tf.reduce_mean(Y_)
 
-# Use optimiser to minimise the above cost.
-# Using RMSProp algorithm. Algo also divides the learning rate by exponentially decaying average of squared gradients
-# Suggested decay param 0.9, learning rate 0.001
-optimiser = tf.train.RMSPropOptimizer(0.001, 0.9).minimize(cost)
+model.summary()
+plot_model(model, to_file='mlp-mnist.png', show_shapes=True)
 
-# define predict_opm, the index with the largest value across dimensions from the output
-predict_op = tf.argmax(py_x, 1)
+# loss function for one-hot vector
+# use of adam optimizer
+# accuracy is a good metric for classification tasks
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-# Define networks running section
-# Perform in batches
+# train the network
+model.fit(trainX, trainY, epochs=20, batch_size=batch_size)
+# validate the model on test dataset to determine generalization
+loss, acc = model.evaluate(testX, testY, batch_size=batch_size)
+print("\nTest accuracy: %.1f%%" % (100.0 * acc))
 
-# implement Tensorflow session
-with tf.Session() as sesh:
-    tf.global_variables_initializer().run()
-    for i in range(100):
-        # Get small batch of training examples that holds images and corresponding labels
-        training_batch = zip(range(0, len(trainX), batch_size), range(batch_size, len(trainX)+1, batch_size))
-
-        # Put batch into a feed_dict with appropriate names for placeholders in the graph
-        # Run optimiser using this batch of training data
-        for start, end in training_batch:
-            sesh.run(optimiser, feed_dict={X: trainX[start:end],
-                                           Y: trainY[start:end],
-                                           p_keep_conv: 0.8,
-                                           p_keep_hidden: 0.5})
-
-        # At the same time get a shuffled batch of test samples
-        test_indices = np.arange(len(testX))
-        np.random.shuffle(test_indices)
-        test_indices = test_indices[0:len(testX)]
-
-        # For each iteration, display the accuracy of the batch
-        print(i, np.mean(np.argmax(testY[test_indices], axis=1) == sesh.run(predict_op,
-                                                                            feed_dict={X: testX[test_indices],
-                                                                                       Y: testY[test_indices],
-                                                                                       p_keep_conv: 1.0,
-                                                                                       p_keep_hidden: 1.0})))
 
 
 
