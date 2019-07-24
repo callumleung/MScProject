@@ -42,8 +42,7 @@ class ResNet:
         # k/4 layers
         bn2 = BatchNormalization(axis=chanDim, epsilon=bnEps, momentum=bnMom)(conv1)
         act2 = Activation("relu")(bn2)
-        conv2 = Conv2D(int(K * 0.25), (3, 3), strides=stride, padding="same", use_bias=False,
-                       kernel_regularizer=l2(reg)(act2))
+        conv2 = Conv2D(int(K * 0.25), (3, 3), strides=stride, padding="same", use_bias=False, kernel_regularizer=l2(reg)(act2))
 
         # third block of the ResNet module is another set of 1x1 CNVs
         # increases dimensionality again, applying K filters with dimensions 1x1

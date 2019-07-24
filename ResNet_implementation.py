@@ -139,9 +139,9 @@ trainX, trainY, testX, testY = sk.train_test_split(images, labels, test_size=0.2
 # Measure performance using cross entropy. Alwyas positive and equal to 0 if predicted == output.
 # Want to minimise the cross-entropy by changing layer variables
 # Cross-entropy function calculates softmax internally so use output of model(...) directly
-#py_x = ResNet.ResNet.build(img_size, img_size, 3, num_classes, stages, filters)
-model = ResNet.ResNet.build(img_size, img_size, 3, num_classes, stages, filters)
-
+# py_x = ResNet.ResNet.build(img_size, img_size, 3, num_classes, stages, filters)
+model = ResNet.ResNet()
+model.build(img_size, img_size, 3, num_classes, stages, filters)
 
 model.summary()
 plot_model(model, to_file='mlp-mnist.png', show_shapes=True)
