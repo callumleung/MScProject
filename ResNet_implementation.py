@@ -4,6 +4,7 @@ import os
 import logging 
 import ResNet
 import sklearn.model_selection as sk
+import pickle 
 import matplotlib.pyplot as plt
 from keras.utils import to_categorical
 from keras.utils import plot_model
@@ -157,14 +158,16 @@ model_history = model.fit(trainX, trainY, epochs=20, batch_size=batch_size)
 
 # Plot training & validation accuracy values
 # from https://keras.io/visualization/
-plt.plot(model_history.history['acc'])
-plt.plot(model_history.history['val_acc'])
-plt.title('Model accuracy')
-plt.ylabel('Accuracy')
-plt.xlabel('Epoch')
-plt.legend(['Train', 'Test'], loc='upper left')
-plt.savefig("ResNet_train_history.png")
+# plt.plot(model_history.history['acc'])
+# plt.plot(model_history.history['val_acc'])
+# plt.title('Model accuracy')
+# plt.ylabel('Accuracy')
+# plt.xlabel('Epoch')
+# plt.legend(['Train', 'Test'], loc='upper left')
+# plt.savefig("ResNet_train_history.png")
 
+with open('/trainHistoryDict', 'wb') as file_pi:
+    pickle.dump(model_history.history, file_pi)
 # validate the model on test dataset to determine generalization
 loss, acc = model.evaluate(testX, testY, batch_size=batch_size)
 print("\nTest accuracy: %.1f%%" % (100.0 * acc))
