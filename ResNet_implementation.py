@@ -4,7 +4,8 @@ import os
 import logging 
 import ResNet
 import sklearn.model_selection as sk
-from keras.utils import to_categorical, plot_model
+from keras.utils import to_categorical
+from keras.utils import plot_model
 import numpy as np
 
 
@@ -144,9 +145,8 @@ model = ResNet.ResNet()
 model = model.build(img_size, img_size, 3, num_classes, stages, filters)
 
 model.summary()
-plot_model(model, to_file='mlp-mnist.png', show_shapes=True)
+# plot_model(model, to_file='mlp-mnist.png', show_shapes=True)
 
-# loss function for one-hot vector
 # use of adam optimizer
 # accuracy is a good metric for classification tasks
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
