@@ -11,6 +11,7 @@ from keras.models import Model
 from keras.layers import add
 from keras.regularizers import l2
 from keras import backend as K
+import tensorflow as tf
 
 # https://towardsdatascience.com/implementing-a-resnet-model-from-scratch-971be7193718
 
@@ -119,7 +120,7 @@ class ResNet:
         # softmax classifier
         x = Flatten()(x)
         x = Dense(classes, kernel_regularizer=l2(reg))(x)
-        x = Activation("softmax", 1)(x)
+        x = Activation(tf.nn.softmax)(x)
 
         # create model
         model = Model(inputs, x, name="resnet")
