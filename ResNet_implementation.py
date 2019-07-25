@@ -104,12 +104,13 @@ images_folder = "train"
 # labels = get_classes(data_csv)
 # labels = labels.reshape((1, -1))
 images = load_images(reduced_csv, images_folder)
+images = images.values.reshape((1, -1))
 
 # convert images into useable form
-for img in images:
-    img = img_to_array(img)
+for imag in images:
+    imag = img_to_array(imag)
 
-# images = images.values.reshape((1, -1))
+#
 # images = images.reshape((1,-1))
 labels = data_csv.landmark_id
 labels = labels.values.reshape((1, -1))
