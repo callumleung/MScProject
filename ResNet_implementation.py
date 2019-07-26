@@ -5,7 +5,7 @@ import logging
 import ResNet
 import sklearn.model_selection as sk
 import pickle
-from keras.preprocessing.image import img_to_array
+from keras.preprocessing import image
 # import matplotlib.pyplot as plt
 # from keras.utils import to_categorical
 # from keras.utils import plot_model
@@ -42,24 +42,27 @@ def load_images(images_csv_path, images_path):
     images_to_load_csv = pd.read_csv(images_csv_path)
 
     # create list of all files
-    all_images_list = pd.DataFrame(os.listdir(images_path), columns=['file'])
+    images_list = []
+    for files in os.listdir(images_path):
+        images_list.append(files)
+    # all_images_list = pd.DataFrame(os.listdir(images_path), columns=['file'])
     # remove file extensions to get image id
-    for index, row in all_images_list.iterrows():
-        row['file'] = row['file'].replace('.jpg', '')
+    for file in np.nditer(images_list):
+        file.replace('.jpg', '')
     # all_images_id = [id.replace('.jpg', '') for id in all_images_list['file']]
+    # grab ids that are in the selected batch
+    images_to_load = images_list[images_list.isin(images_to_load_csv['id'])]
 
-    images_to_load = all_images_list[all_images_list.isin(images_to_load_csv['id'])]
-
-    for index, row in all_images_list.iterrows():
-        row['file'] = row['file']+'.jpg'
-
+    # reattach file ending to use to load image
+    for ids in np.nditer(images_to_load):
+        ids = ids + ".jpg"
     # reattach file extension to load in images
     # all_images_id_extension = [id.append('.jpg') for id in images_to_load]
 
     #images = [tf.read_file(images_path/file) for file in all_images_id_extension]
-    images = pd.DataFrame()   
-    for index, row in all_images_list.iterrows():
-        images.add(tf.read_file('{}/{}'.format(images_path, row['file'])))
+    images = []
+    for file in np.nditer(images_to_load):
+        images.append(image.load_img('{}/{}'.format(images_path, file)))
     return images
 
 
@@ -104,11 +107,11 @@ images_folder = "train"
 # labels = get_classes(data_csv)
 # labels = labels.reshape((1, -1))
 images = load_images(reduced_csv, images_folder)
-images = images.values.reshape((1, -1))
+# images = images.values.reshape((1, -1))
 
 # convert images into useable form
-for imag in images:
-    imag = img_to_array(imag)
+for imag in np.nditer(images):
+    imag = images.img_to_array(imag)
 
 #
 # images = images.reshape((1,-1))
@@ -141,7 +144,7 @@ p_keep_hidden = tf.placeholder("float")
 # labels_ = np.zeros((images.shape[0], labels))
 # labels_[np.arange(images.shape[0]), labels] = 1
 
-trainX, trainY, testX, testY = sk.train_test_split(images, labels, test_size=0.25, random_state=42)
+# trainX, trainY, testX, testY = sk.train_test_split(images, labels, test_size=0.25, random_state=42)
 
 
 
@@ -161,7 +164,7 @@ model.summary()
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 # train the network
-model_history = model.fit(trainX, trainY, epochs=20, batch_size=batch_size)
+model_history = model.fit(images, labels, epochs=20, batch_size=batch_size)
 
 # Plot training & validation accuracy values
 # from https://keras.io/visualization/
@@ -176,7 +179,7 @@ model_history = model.fit(trainX, trainY, epochs=20, batch_size=batch_size)
 with open('/trainHistoryDict', 'wb') as file_pi:
     pickle.dump(model_history.history, file_pi)
 # validate the model on test dataset to determine generalization
-loss, acc = model.evaluate(testX, testY, batch_size=batch_size)
+loss, acc = model.evaluate(images, labels, batch_size=batch_size)
 print("\nTest accuracy: %.1f%%" % (100.0 * acc))
 
 
