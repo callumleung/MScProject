@@ -43,10 +43,11 @@ def load_images(images_csv_path, images_path):
 
     # create list of all files
     images_list = []
+    columns = ['ids']
     for files in os.listdir(images_path):
         images_list.append(files)
 
-    images_list = pd.DataFrame(images_list, columns='ids')
+    images_list = pd.DataFrame(images_list, columns=columns)
     # all_images_list = pd.DataFrame(os.listdir(images_path), columns=['file'])
     # remove file extensions to get image id
     for file in images_list:
@@ -67,7 +68,7 @@ def load_images(images_csv_path, images_path):
     images = []
     for file in images_to_load:
         images.append(image.load_img('{}/{}'.format(images_path, file)))
-    return pd.DataFrame(images, columns='images')
+    return pd.DataFrame(images, columns=['images'])
 
 
 def copy_chosen_images(images_csv_path, images_path):
