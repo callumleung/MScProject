@@ -45,17 +45,21 @@ def load_images(images_csv_path, images_path):
     images_list = []
     for files in os.listdir(images_path):
         images_list.append(files)
+
+    images_list = pd.DataFrame(images_list, columns='ids')
     # all_images_list = pd.DataFrame(os.listdir(images_path), columns=['file'])
     # remove file extensions to get image id
     for file in images_list:
         file.replace('.jpg', '')
     # all_images_id = [id.replace('.jpg', '') for id in all_images_list['file']]
     # grab ids that are in the selected batch
-    images_to_load = images_list[images_list.isin(images_to_load_csv['id'])]
+
+    images_to_load = images_list.loc[images_list['ids'].isin(images_to_load_csv['ids'])]
+    # images_to_load = images_list[images_list.isin(images_to_load_csv['ids'])]
 
     # reattach file ending to use to load image
-    for ids in images_to_load:
-        ids = ids + ".jpg"
+    for index, row in images_to_load.iterrows():
+        row['ids'] = row['ids'] + ".jpg"
     # reattach file extension to load in images
     # all_images_id_extension = [id.append('.jpg') for id in images_to_load]
 
@@ -63,7 +67,7 @@ def load_images(images_csv_path, images_path):
     images = []
     for file in images_to_load:
         images.append(image.load_img('{}/{}'.format(images_path, file)))
-    return images
+    return pd.DataFrame(images, columns='images')
 
 
 def copy_chosen_images(images_csv_path, images_path):
@@ -111,13 +115,14 @@ print(images.shape)
 # images = images.values.reshape((1, -1))
 
 # convert images into useable form
-for imag in images:
-    imag = images.img_to_array(imag)
-print(images)
+# for imag in images:
+#     imag = images.img_to_array(imag)
+
 #
 # images = images.reshape((1,-1))
 labels = data_csv.landmark_id
 labels = labels.values.reshape((1, -1))
+print(labels.shape)
 
 num_classes = 52584  # remove hardcoded number, use unique values in reduced csv
 stages = (3, 4, 6)
