@@ -47,21 +47,21 @@ def load_images(images_csv_path, images_path):
         images_list.append(files)
     # all_images_list = pd.DataFrame(os.listdir(images_path), columns=['file'])
     # remove file extensions to get image id
-    for file in np.nditer(images_list):
+    for file in images_list:
         file.replace('.jpg', '')
     # all_images_id = [id.replace('.jpg', '') for id in all_images_list['file']]
     # grab ids that are in the selected batch
     images_to_load = images_list[images_list.isin(images_to_load_csv['id'])]
 
     # reattach file ending to use to load image
-    for ids in np.nditer(images_to_load):
+    for ids in images_to_load:
         ids = ids + ".jpg"
     # reattach file extension to load in images
     # all_images_id_extension = [id.append('.jpg') for id in images_to_load]
 
     #images = [tf.read_file(images_path/file) for file in all_images_id_extension]
     images = []
-    for file in np.nditer(images_to_load):
+    for file in images_to_load:
         images.append(image.load_img('{}/{}'.format(images_path, file)))
     return images
 
@@ -107,12 +107,13 @@ images_folder = "train"
 # labels = get_classes(data_csv)
 # labels = labels.reshape((1, -1))
 images = load_images(reduced_csv, images_folder)
+print(images.shape)
 # images = images.values.reshape((1, -1))
 
 # convert images into useable form
-for imag in np.nditer(images):
+for imag in images:
     imag = images.img_to_array(imag)
-
+print(images)
 #
 # images = images.reshape((1,-1))
 labels = data_csv.landmark_id
