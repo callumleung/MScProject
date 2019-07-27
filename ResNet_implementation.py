@@ -43,7 +43,7 @@ def load_images(images_csv_path, images_path):
 
     # create list of all files
     images_list = []
-    columns = ['ids']
+    columns = ['id']
     for files in os.listdir(images_path):
         images_list.append(files)
 
@@ -55,12 +55,12 @@ def load_images(images_csv_path, images_path):
     # all_images_id = [id.replace('.jpg', '') for id in all_images_list['file']]
     # grab ids that are in the selected batch
 
-    images_to_load = images_list.loc[images_list['ids'].isin(images_to_load_csv['ids'])]
+    images_to_load = images_list.loc[images_list.isin(images_to_load_csv['id'])]
     # images_to_load = images_list[images_list.isin(images_to_load_csv['ids'])]
 
     # reattach file ending to use to load image
     for index, row in images_to_load.iterrows():
-        row['ids'] = row['ids'] + ".jpg"
+        row['id'] = row['id'] + ".jpg"
     # reattach file extension to load in images
     # all_images_id_extension = [id.append('.jpg') for id in images_to_load]
 
