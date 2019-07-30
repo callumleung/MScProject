@@ -55,7 +55,7 @@ def load_images(images_csv_path, images_path):
     # all_images_id = [id.replace('.jpg', '') for id in all_images_list['file']]
     # grab ids that are in the selected batch
 
-    images_to_load = images_list.loc[images_list.isin(images_to_load_csv["id"])]
+    images_to_load = images_list[images_list.isin(images_to_load_csv["id"])]
     # images_to_load = images_list[images_list.isin(images_to_load_csv['ids'])]
 
     # reattach file ending to use to load image
