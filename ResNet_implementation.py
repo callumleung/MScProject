@@ -59,8 +59,8 @@ def load_images(images_csv_path, images_path):
     # images_to_load = images_list[images_list.isin(images_to_load_csv['ids'])]
 
     # reattach file ending to use to load image
-    for index, row in images_to_load.iterrows():
-        row['id'] = row['id'] + ".jpg"
+    for file in images_to_load:
+        file = file + ".jpg"
     # reattach file extension to load in images
     # all_images_id_extension = [id.append('.jpg') for id in images_to_load]
 
