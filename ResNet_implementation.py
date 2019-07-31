@@ -46,7 +46,7 @@ def load_images(images_csv_path, images_path):
     images_list = []
     columns = ['id']
     for files in os.listdir(images_path):
-        images_list.append(files)
+        images_list.append(str(files))
 
     images_list = pd.DataFrame(images_list, columns=columns)
     # all_images_list = pd.DataFrame(os.listdir(images_path), columns=['file'])
@@ -68,11 +68,12 @@ def load_images(images_csv_path, images_path):
     #images = [tf.read_file(images_path/file) for file in all_images_id_extension]
     images = []
     for file in images_to_load:
-        print(images_to_load.head())
-        path = '{}/{}'.format(images_path, file)
-        print(path)
-        images.append(image.load_img(path))
-
+        if file != 'id':
+            print(images_to_load.head())
+            path = '{}/{}'.format(images_path, file)
+            print(path)
+            images.append(image.load_img(path))
+        
     return pd.DataFrame(images, columns=['images'])
 
 
