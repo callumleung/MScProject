@@ -51,8 +51,9 @@ def load_images(images_csv_path, images_path):
     images_list = pd.DataFrame(images_list, columns=columns)
     # all_images_list = pd.DataFrame(os.listdir(images_path), columns=['file'])
     # remove file extensions to get image id
-    for file in images_list:
-        file.replace('.jpg', '')
+    for index, row in images_list.iterrows():
+        replace_id = row['id'].replace(".jpg", "")
+        images_list.set_value(index, 'id', replace_id)
     # all_images_id = [id.replace('.jpg', '') for id in all_images_list['file']]
     # grab ids that are in the selected batch
 
@@ -60,12 +61,13 @@ def load_images(images_csv_path, images_path):
     # images_to_load = images_list[images_list.isin(images_to_load_csv['ids'])]
 
     # reattach file ending to use to load image
-    for file in images_to_load:
-        file = file + ".jpg"
+    for index, row in images_to_load.iterrows():
+        file_address = row['id'] + ".jpg"
+        images_to_load.set_value(index, 'id', file_address)
     # reattach file extension to load in images
     # all_images_id_extension = [id.append('.jpg') for id in images_to_load]
 
-    #images = [tf.read_file(images_path/file) for file in all_images_id_extension]
+    # images = [tf.read_file(images_path/file) for file in all_images_id_extension]
     images = []
     for file in images_to_load:
         print(images_to_load.head())
