@@ -68,6 +68,7 @@ def load_images(images_csv_path, images_path):
     #images = [tf.read_file(images_path/file) for file in all_images_id_extension]
     images = []
     for file in images_to_load:
+        print(images_to_load.head())
         path = '{}/{}'.format(images_path, file)
         print(path)
         images.append(image.load_img(path))
