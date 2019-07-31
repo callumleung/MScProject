@@ -76,9 +76,10 @@ def load_images(images_csv_path, images_path):
     print("prtingin images_to_load")
     print(images_to_load.head())
     for file in images_to_load:
-        path = '{}/{}'.format(images_path, file)
-        print(path)
-        images.append(image.load_img(path))
+        if file != 'id':
+            path = '{}/{}'.format(images_path, file)
+            print(path)
+            images.append(image.load_img(path))
 
     return pd.DataFrame(images, columns=['images'])
 
