@@ -37,6 +37,7 @@ def create_logger(filename,
 
     return logger
 
+
 # load in images
 def load_images(images_csv_path, images_path):
     images_to_load_csv = pd.read_csv(images_csv_path)
@@ -67,7 +68,10 @@ def load_images(images_csv_path, images_path):
     #images = [tf.read_file(images_path/file) for file in all_images_id_extension]
     images = []
     for file in images_to_load:
-        images.append(image.load_img('{}/{}'.format(images_path, file)))
+        path = '{}/{}'.format(images_path, file)
+        print(path)
+        images.append(image.load_img(path))
+
     return pd.DataFrame(images, columns=['images'])
 
 
