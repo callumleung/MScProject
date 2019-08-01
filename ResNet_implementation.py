@@ -75,9 +75,10 @@ def load_images(images_csv_path, images_path):
     images = []
     print("prtingin images_to_load")
     print(images_to_load.head())
-    for file in images_to_load:
-        if file != 'id':
-            path = '{}/{}'.format(images_path, file)
+    # I think this needs to be changed to iterows
+    for index, row in images_to_load.iterrows():
+        if row['id'] != 'id':
+            path = '{}/{}'.format(images_path, row['id'])
             print(path)
             images.append(image.load_img(path))
 
