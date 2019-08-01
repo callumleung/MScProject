@@ -79,8 +79,10 @@ def load_images(images_csv_path, images_path):
     for index, row in images_to_load.iterrows():
         if row['id'] != 'id':
             path = '{}/{}'.format(images_path, row['id'])
-            print(path)
-            images.append(image.load_img(path))
+            # print(path)
+            temp_img = image.load_img(path)
+            images.append(temp_img)
+            temp_img.close()
 
     print("loaded Images shape:")
     print(len(images))
@@ -123,6 +125,7 @@ def get_classes(data_csv):
     # separate the landmark id from the rest of the data
     example_indexes = example_counts.index.values
     return example_indexes
+
 
 logger = create_logger('move_selected_images.log')
 reduced_csv = "20_examples.csv"
