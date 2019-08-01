@@ -6,6 +6,7 @@ import ResNet
 import sklearn.model_selection as sk
 import pickle
 from keras.preprocessing import image
+
 # import matplotlib.pyplot as plt
 # from keras.utils import to_categorical
 # from keras.utils import plot_model
@@ -81,7 +82,8 @@ def load_images(images_csv_path, images_path):
             path = '{}/{}'.format(images_path, row['id'])
             # print(path)
             temp_img = image.load_img(path)
-            images.append(temp_img)
+            temp_img_array = image.img_to_array(temp_img)
+            images.append(temp_img_array)
             temp_img.close()
 
     print("loaded Images shape:")
@@ -146,7 +148,7 @@ print(images.shape)
 #
 # images = images.reshape((1,-1))
 labels = data_csv.landmark_id
-labels = labels.values.reshape((1, -1))
+# labels = labels.values.reshape((1, -1))
 print("printing labels shape")
 print(labels.shape)
 
