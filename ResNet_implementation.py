@@ -80,7 +80,13 @@ def load_images(images_csv_path, images_path):
         print(path)
         images.append(image.load_img(path))
 
-    return pd.DataFrame(images, columns=['images'])
+    print("loaded Images shape:")
+    print(len(images))
+
+    return_df = pd.DataFrame(images, columns=['images'])
+    print("printing return shape")
+    print(return_df.shape)
+    return return_df
 
 
 def copy_chosen_images(images_csv_path, images_path):
@@ -124,6 +130,7 @@ images_folder = "train"
 # labels = get_classes(data_csv)
 # labels = labels.reshape((1, -1))
 images = load_images(reduced_csv, images_folder)
+print("printing images shape")
 print(images.shape)
 # images = images.values.reshape((1, -1))
 
@@ -135,6 +142,7 @@ print(images.shape)
 # images = images.reshape((1,-1))
 labels = data_csv.landmark_id
 labels = labels.values.reshape((1, -1))
+print("printing labels shape")
 print(labels.shape)
 
 num_classes = 52584  # remove hardcoded number, use unique values in reduced csv
