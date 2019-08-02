@@ -136,6 +136,7 @@ images_folder = "train"
 # copy_chosen_images(reduced_csv, images_folder)
 # labels = get_classes(data_csv)
 # labels = labels.reshape((1, -1))
+print("about to load images")
 images = load_images(reduced_csv, images_folder)
 print("printing images shape")
 print(images.shape)
@@ -190,7 +191,7 @@ p_keep_hidden = tf.placeholder("float")
 model = ResNet.ResNet()
 model = model.build(img_size, img_size, 3, num_classes, stages, filters)
 
-model.summary()
+# model.summary()
 # plot_model(model, to_file='mlp-mnist.png', show_shapes=True)
 
 # use of adam optimizer
