@@ -342,19 +342,22 @@ predIdxs = np.argmax(predIdxs, axis=1)
 print("~~~~~~~~~Evaluating network~~~~~~~~~~~")
 print(classification_report(testLabels.argmax(axis=1), predIdxs, target_names=lb.classes_))
 
+model.save("ResNet_trained_model")
+
+
 # plot the training loss and accuracy
-N = NUM_EPOCHS
-plt.style.use("ggplot")
-plt.figure()
-plt.plot(np.arange(0, N), model_history.history["loss"], label="train_loss")
-plt.plot(np.arange(0, N), model_history.history["val_loss"], label="val_loss")
-plt.plot(np.arange(0, N), model_history.history["acc"], label="train_acc")
-plt.plot(np.arange(0, N), model_history.history["val_acc"], label="val_acc")
-plt.title("Training Loss and Accuracy on Dataset")
-plt.xlabel("Epoch #")
-plt.ylabel("Loss/Accuracy")
-plt.legend(loc="lower left")
-plt.savefig("plot.png")
+# N = NUM_EPOCHS
+# plt.style.use("ggplot")
+# plt.figure()
+# plt.plot(np.arange(0, N), model_history.history["loss"], label="train_loss")
+# plt.plot(np.arange(0, N), model_history.history["val_loss"], label="val_loss")
+# plt.plot(np.arange(0, N), model_history.history["acc"], label="train_acc")
+# plt.plot(np.arange(0, N), model_history.history["val_acc"], label="val_acc")
+# plt.title("Training Loss and Accuracy on Dataset")
+# plt.xlabel("Epoch #")
+# plt.ylabel("Loss/Accuracy")
+# plt.legend(loc="lower left")
+# plt.savefig("plot.png")
 # with open('/trainHistoryDict', 'wb') as file_pi:
 #     pickle.dump(model_history.history, file_pi)
 
