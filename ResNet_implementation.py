@@ -16,6 +16,8 @@ import numpy as np
 # label binarizer object containing class labels
 # mode is either train or eval, in eval no augmentation is applied
 # aug: if supplied will be applied before yeilding images and labels
+
+
 def csv_image_generator(input_path, images_folder, batch_size, label_binarizer, mode="train", aug=None):
     # Open csv
     f = open(input_path, "r")
@@ -183,6 +185,12 @@ def get_classes(data_csv):
     # separate the landmark id from the rest of the data
     example_indexes = example_counts.index.values
     return example_indexes
+
+
+# path to train csv
+train_csv = "20_examples_train.csv"
+
+
 
 
 logger = create_logger('move_selected_images.log')
