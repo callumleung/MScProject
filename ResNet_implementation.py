@@ -3,12 +3,12 @@ import tensorflow as tf
 import os
 import logging 
 import ResNet
-import sklearn.model_selection as sk
-import pickle
+#import sklearn.model_selection as sk
+#import pickle
 from keras.preprocessing import image
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.metrics import classification_report
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 # import matplotlib.pyplot as plt
 # from keras.utils import to_categorical
 # from keras.utils import plot_model
