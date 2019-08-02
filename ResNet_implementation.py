@@ -12,6 +12,61 @@ from keras.preprocessing import image
 # from keras.utils import plot_model
 import numpy as np
 
+# cite https://www.pyimagesearch.com/2018/12/24/how-to-use-keras-fit-and-fit_generator-a-hands-on-tutorial/ 2/08/19
+# label binarizer object containing class labels
+# mode is either train or eval, in eval no augmentation is applied
+# aug: if supplied will be applied before yeilding images and labels
+def csv_image_generator(input_path, images_folder, batch_size, label_binarizer, mode="train", aug=None):
+    # Open csv
+    f = open(input_path, "r")
+
+    # loop infinitely
+    while True:
+        # initialise images and labels
+        images = []
+        labels = []
+        # loop while images is less than the batch size
+        while len(images) < batch_size:
+            # attempt to read next line of csv
+            line = f.readline()
+
+            # check if end of file has been reached
+            if line == "":
+                # return to the head of the file so that the stream does no end causing an error in the fit_batch method
+                f.seek(0)
+                line = f.readline()
+
+                # if evaluating break from loop so as to not continuously fill batch from samples at head of file
+                if mode == "eval":
+                    break
+
+            # extract label (landmark id) and load the image
+            # line format in our csv is "file id, url, landmark id"
+            line = line.strip().split(",")
+            # label = landmark_id, the 3rd entry of the line
+            label = line[2]
+            # append .jpg to the image id to load the image
+            image_uri = str(line[0]) + ".jpg"
+            image_path = "{}/{}".format(images_folder, image_uri)
+            img = image.load_img(image_path)
+            # convert to a usable array
+            img = image.img_to_array(img)
+
+            # add to current working batches lists
+            images.append(img)
+            labels.append(label)
+
+            # One hot encode labels
+            labels = label_binarizer.transform(np.array(labels))
+
+            # deal with data augmentation
+            if aug is not None:
+                (images, labels) = next(aug.flow(np.array(images), labels, batch_size=batch_size))
+
+            # finally yield images to calling function
+            yield(np.array(images), labels)
+
+
 
 
 def create_logger(filename,
@@ -72,6 +127,7 @@ def load_images(images_csv_path, images_path):
     # reattach file extension to load in images
     # all_images_id_extension = [id.append('.jpg') for id in images_to_load]
 
+    # TODO: load images in batches rather than all at once
     # images = [tf.read_file(images_path/file) for file in all_images_id_extension]
     images = []
     print("prtingin images_to_load")
@@ -199,7 +255,13 @@ model = model.build(img_size, img_size, 3, num_classes, stages, filters)
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 # train the network
-model_history = model.fit(images, labels, epochs=20, batch_size=batch_size)
+# TODO: replace with fit_generator
+# performing data argumentation by training image generator
+dataAugmentaion = image.ImageDataGenerator(rotation_range=30, zoom_range=0.20,
+                                           fill_mode="nearest", shear_range=0.20, horizontal_flip=True,
+                                           width_shift_range=0.1, height_shift_range=0.1)
+model_history = model.fit_generator
+#model_history = model.fit(images, labels, epochs=20, batch_size=batch_size)
 
 # Plot training & validation accuracy values
 # from https://keras.io/visualization/
@@ -214,6 +276,7 @@ model_history = model.fit(images, labels, epochs=20, batch_size=batch_size)
 with open('/trainHistoryDict', 'wb') as file_pi:
     pickle.dump(model_history.history, file_pi)
 # validate the model on test dataset to determine generalization
+# TODO: change data and labels to test set
 loss, acc = model.evaluate(images, labels, batch_size=batch_size)
 print("\nTest accuracy: %.1f%%" % (100.0 * acc))
 
