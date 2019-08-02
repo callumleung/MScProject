@@ -6,7 +6,9 @@ import ResNet
 import sklearn.model_selection as sk
 import pickle
 from keras.preprocessing import image
-
+from sklearn.preprocessing import LabelBinarizer
+from sklearn.metrics import classification_report
+import matplotlib.pyplot as plt
 # import matplotlib.pyplot as plt
 # from keras.utils import to_categorical
 # from keras.utils import plot_model
@@ -189,21 +191,63 @@ def get_classes(data_csv):
 
 # path to train csv
 train_csv = "20_examples_train.csv"
-
-
-
-
-logger = create_logger('move_selected_images.log')
-reduced_csv = "20_examples.csv"
-data_csv = pd.read_csv(reduced_csv)
+test_csv = "20_examples_test.csv"
 images_folder = "train"
+
+# Define number of epochs and batch size
+NUM_EPOCHS = 75
+BATCH_SIZE = 128
+
+# Initialise number of training and test images
+NUM_TRAIN_IMAGES = 0
+NUM_TEST_IMAGES = 0
+
+# Open train csv and get list of labels in train set and test set
+f = pd.read_csv(train_csv)
+trainLabels = set(f[['landmark_id']])
+NUM_TRAIN_IMAGES = len(trainLabels)
+f.close()
+
+# Open test csv and get list of testLabels
+f = pd.read_csv(test_csv)
+testLabels = set(f[['landmark_id']])
+NUM_TEST_IMAGES = len(testLabels)
+f.close()
+
+
+# Build labelBinarizer for one-hot encoding labels and then encode the testing labels
+lb = LabelBinarizer()
+# fit using unique labels only
+lb.fit(list(trainLabels))
+# transform testLabels into binary one hot encoded tesLabels
+testLabels = lb.transform(testLabels)
+
+#sample image constructor for data augmentation, not currently in use
+# performing data argumentation by training image generator
+# randomly rotates flips shears etc
+dataAugmentaion = image.ImageDataGenerator(rotation_range=30, zoom_range=0.20,
+                                           fill_mode="nearest", shear_range=0.20, horizontal_flip=True,
+                                           width_shift_range=0.1, height_shift_range=0.1)
+
+# initialsise training and testing image generators
+# both methods currently do not apply aug but in the case this is applied  it will only be applied to the traingen
+# both calls use mode train
+trainGen = csv_image_generator(train_csv, images_folder, BATCH_SIZE, lb, mode="train", aug=None)
+testGen = csv_image_generator(test_csv, images_folder, BATCH_SIZE, lb, mode="train")
+
+
+
+# logger = create_logger('move_selected_images.log')
+# reduced_csv = "20_examples.csv"
+# data_csv = pd.read_csv(reduced_csv)
+
 # copy_chosen_images(reduced_csv, images_folder)
 # labels = get_classes(data_csv)
 # labels = labels.reshape((1, -1))
-print("about to load images")
-images = load_images(reduced_csv, images_folder)
-print("printing images shape")
-print(images.shape)
+# print("about to load images")
+# images = load_images(reduced_csv, images_folder)
+# print("printing images shape")
+# print(images.shape)
 # images = images.values.reshape((1, -1))
 
 # convert images into useable form
@@ -212,32 +256,32 @@ print(images.shape)
 
 #
 # images = images.reshape((1,-1))
-labels = data_csv.landmark_id
-# labels = labels.values.reshape((1, -1))
-print("printing labels shape")
-print(labels.shape)
+# labels = data_csv.landmark_id
+# # labels = labels.values.reshape((1, -1))
+# print("printing labels shape")
+# print(labels.shape)
 
-num_classes = 52584  # remove hardcoded number, use unique values in reduced csv
+# num_classes = 52584  # remove hardcoded number, use unique values in reduced csv
 stages = (3, 4, 6)
 filters = (64, 128, 256, 512)
 
 # Set parameters for learning
-batch_size = 128
+# batch_size = 128
 # test_size = 256
 img_size = 224
 
 # Placeholder variable for input images
 # Shape is [None, img_size, img_size, 1]
 # None specifies that the tensor can hold an arbitrary number of images
-X = tf.placeholder("float", [None, img_size, img_size, 1])
+# X = tf.placeholder("float", [None, img_size, img_size, 1])
 
 # Placeholder Y for the labels associated correctly with input images in placeholder X
 # Shape is [None, num_classes]
 # None specifies that the tensor can hold an arbitrary number of labels, each of length num_classes
-Y = tf.placeholder("float", [None, num_classes])
-
-p_keep_conv = tf.placeholder("float")
-p_keep_hidden = tf.placeholder("float")
+# Y = tf.placeholder("float", [None, num_classes])
+#
+# p_keep_conv = tf.placeholder("float")
+# p_keep_hidden = tf.placeholder("float")
 
 # Labels need to be coded
 # labels_ = np.zeros((images.shape[0], labels))
@@ -253,7 +297,7 @@ p_keep_hidden = tf.placeholder("float")
 # Cross-entropy function calculates softmax internally so use output of model(...) directly
 # py_x = ResNet.ResNet.build(img_size, img_size, 3, num_classes, stages, filters)
 model = ResNet.ResNet()
-model = model.build(img_size, img_size, 3, num_classes, stages, filters)
+model = model.build(img_size, img_size, 3, len(lb.classes_), stages, filters)
 
 # model.summary()
 # plot_model(model, to_file='mlp-mnist.png', show_shapes=True)
@@ -263,12 +307,14 @@ model = model.build(img_size, img_size, 3, num_classes, stages, filters)
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 # train the network
-# TODO: replace with fit_generator
-# performing data argumentation by training image generator
-dataAugmentaion = image.ImageDataGenerator(rotation_range=30, zoom_range=0.20,
-                                           fill_mode="nearest", shear_range=0.20, horizontal_flip=True,
-                                           width_shift_range=0.1, height_shift_range=0.1)
-model_history = model.fit_generator
+# trainGen yields batches of data and labels
+# steps per epoch must be supplied eother keras doesnt know when one epoch begins and another ends
+# steps per epoch are caluclated from the number of images divided batch size
+model_history = model.fit_generator(trainGen,
+                                    steps_per_epoch=NUM_TRAIN_IMAGES//BATCH_SIZE,
+                                    validation_data=testGen,
+                                    validation_steps=NUM_TEST_IMAGES//BATCH_SIZE,
+                                    epochs=NUM_EPOCHS)
 #model_history = model.fit(images, labels, epochs=20, batch_size=batch_size)
 
 # Plot training & validation accuracy values
@@ -281,14 +327,36 @@ model_history = model.fit_generator
 # plt.legend(['Train', 'Test'], loc='upper left')
 # plt.savefig("ResNet_train_history.png")
 
-with open('/trainHistoryDict', 'wb') as file_pi:
-    pickle.dump(model_history.history, file_pi)
+
 # validate the model on test dataset to determine generalization
 # TODO: change data and labels to test set
-loss, acc = model.evaluate(images, labels, batch_size=batch_size)
-print("\nTest accuracy: %.1f%%" % (100.0 * acc))
+# Evaluate the model
+# reinitialise the testGen this time in eval  mode
+testGen = csv_image_generator(test_csv, images_folder, BATCH_SIZE, lb, mode="eval", aug=None)
 
+# make predicitions of test images finding the index of the label with the corresponding largest pred prob
+predIdxs = model.predict_generator(testGen, steps=(NUM_TEST_IMAGES//BATCH_SIZE)+1)
+predIdxs = np.argmax(predIdxs, axis=1)
 
+# show classification report
+print("~~~~~~~~~Evaluating network~~~~~~~~~~~")
+print(classification_report(testLabels.argmax(axis=1), predIdxs, target_names=lb.classes_))
+
+# plot the training loss and accuracy
+N = NUM_EPOCHS
+plt.style.use("ggplot")
+plt.figure()
+plt.plot(np.arange(0, N), model_history.history["loss"], label="train_loss")
+plt.plot(np.arange(0, N), model_history.history["val_loss"], label="val_loss")
+plt.plot(np.arange(0, N), model_history.history["acc"], label="train_acc")
+plt.plot(np.arange(0, N), model_history.history["val_acc"], label="val_acc")
+plt.title("Training Loss and Accuracy on Dataset")
+plt.xlabel("Epoch #")
+plt.ylabel("Loss/Accuracy")
+plt.legend(loc="lower left")
+plt.savefig("plot.png")
+# with open('/trainHistoryDict', 'wb') as file_pi:
+#     pickle.dump(model_history.history, file_pi)
 
 
 
