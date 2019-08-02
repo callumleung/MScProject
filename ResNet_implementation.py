@@ -206,13 +206,13 @@ NUM_TEST_IMAGES = 0
 f = pd.read_csv(train_csv)
 trainLabels = set(f[['landmark_id']])
 NUM_TRAIN_IMAGES = len(trainLabels)
-f.close()
+#f.close()
 
 # Open test csv and get list of testLabels
 f = pd.read_csv(test_csv)
 testLabels = set(f[['landmark_id']])
 NUM_TEST_IMAGES = len(testLabels)
-f.close()
+#f.close()
 
 
 # Build labelBinarizer for one-hot encoding labels and then encode the testing labels
