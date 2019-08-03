@@ -196,8 +196,8 @@ test_csv = "20_examples_test.csv"
 images_folder = "train"
 
 # Define number of epochs and batch size
-NUM_EPOCHS = 75
-BATCH_SIZE = 128
+NUM_EPOCHS = 50
+BATCH_SIZE = 32
 
 # Initialise number of training and test images
 NUM_TRAIN_IMAGES = 0
@@ -343,7 +343,7 @@ predIdxs = np.argmax(predIdxs, axis=1)
 print("~~~~~~~~~Evaluating network~~~~~~~~~~~")
 print(classification_report(testLabels.argmax(axis=1), predIdxs, target_names=lb.classes_))
 
-model.save("ResNet_trained_model")
+model.save("ResNet_trained_model_bs_32")
 
 
 # plot the training loss and accuracy
