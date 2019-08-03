@@ -210,7 +210,7 @@ NUM_TRAIN_IMAGES = len(trainLabels)
 
 # Open test csv and get list of testLabels
 f = pd.read_csv(test_csv)
-testLabels = set(f[['landmark_id']])
+testLabels = f['landmark_id'].unique()
 NUM_TEST_IMAGES = len(testLabels)
 #f.close()
 
