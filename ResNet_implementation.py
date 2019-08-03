@@ -197,7 +197,7 @@ images_folder = "train"
 
 # Define number of epochs and batch size
 NUM_EPOCHS = 50
-BATCH_SIZE = 32
+BATCH_SIZE = 128
 
 # Initialise number of training and test images
 NUM_TRAIN_IMAGES = 0
@@ -315,7 +315,9 @@ model_history = model.fit_generator(trainGen,
                                     steps_per_epoch=NUM_TRAIN_IMAGES//BATCH_SIZE,
                                     validation_data=testGen,
                                     validation_steps=NUM_TEST_IMAGES//BATCH_SIZE,
-                                    epochs=NUM_EPOCHS)
+                                    epochs=NUM_EPOCHS,
+                                    use_multiprocessing=True,
+                                    workers=40)
 #model_history = model.fit(images, labels, epochs=20, batch_size=batch_size)
 
 # Plot training & validation accuracy values
