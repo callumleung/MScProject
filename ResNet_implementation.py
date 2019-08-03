@@ -47,28 +47,29 @@ def csv_image_generator(input_path, images_folder, batch_size, label_binarizer, 
             # extract label (landmark id) and load the image
             # line format in our csv is "file id, url, landmark id"
             line = line.strip().split(",")
-            # label = landmark_id, the 3rd entry of the line
-            label = line[2]
-            # append .jpg to the image id to load the image
-            image_uri = str(line[0]) + ".jpg"
-            image_path = "{}/{}".format(images_folder, image_uri)
-            img = image.load_img(image_path)
-            # convert to a usable array
-            img = image.img_to_array(img)
+            if line[0] != 'id':
+                # label = landmark_id, the 3rd entry of the line
+                label = line[2]
+                # append .jpg to the image id to load the image
+                image_uri = str(line[0]) + ".jpg"
+                image_path = "{}/{}".format(images_folder, image_uri)
+                img = image.load_img(image_path)
+                # convert to a usable array
+                img = image.img_to_array(img)
 
-            # add to current working batches lists
-            images.append(img)
-            labels.append(label)
+                # add to current working batches lists
+                images.append(img)
+                labels.append(label)
 
-            # One hot encode labels
-            labels = label_binarizer.transform(np.array(labels))
+        # One hot encode labels
+        labels = label_binarizer.transform(np.array(labels))
 
-            # deal with data augmentation
-            if aug is not None:
-                (images, labels) = next(aug.flow(np.array(images), labels, batch_size=batch_size))
+                # deal with data augmentation
+        if aug is not None:
+            (images, labels) = next(aug.flow(np.array(images), labels, batch_size=batch_size))
 
-            # finally yield images to calling function
-            yield(np.array(images), labels)
+        # finally yield images to calling function
+        yield(np.array(images), labels)
 
 
 
