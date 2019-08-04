@@ -315,9 +315,7 @@ model_history = model.fit_generator(trainGen,
                                     steps_per_epoch=NUM_TRAIN_IMAGES//BATCH_SIZE,
                                     validation_data=testGen,
                                     validation_steps=NUM_TEST_IMAGES//BATCH_SIZE,
-                                    epochs=NUM_EPOCHS,
-                                    use_multiprocessing=True,
-                                    workers=40)
+                                    epochs=NUM_EPOCHS)
 #model_history = model.fit(images, labels, epochs=20, batch_size=batch_size)
 
 # Plot training & validation accuracy values
