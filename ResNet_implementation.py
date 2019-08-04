@@ -196,8 +196,8 @@ test_csv = "20_examples_test.csv"
 images_folder = "train"
 
 # Define number of epochs and batch size
-NUM_EPOCHS = 50
-BATCH_SIZE = 128
+NUM_EPOCHS = 75
+BATCH_SIZE = 8
 
 # Initialise number of training and test images
 NUM_TRAIN_IMAGES = 0

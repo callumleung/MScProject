@@ -2,8 +2,8 @@
 
 #$ -cwd -V
 #$-l h_rt=12:59:59
-#$ -pe smp 20
+#$ -pe mpi 40
 #$ -R y
 
-python ResNet_implementation.py
+mpirun -np 40 ResNet_implementation.py
 
