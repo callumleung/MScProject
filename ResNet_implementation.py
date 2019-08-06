@@ -6,6 +6,7 @@ import ResNet
 #import sklearn.model_selection as sk
 #import pickle
 from keras.preprocessing import image
+from keras import optimizers
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.metrics import classification_report
 #import matplotlib.pyplot as plt
@@ -233,7 +234,7 @@ dataAugmentaion = image.ImageDataGenerator(rotation_range=30, zoom_range=0.20,
 # initialsise training and testing image generators
 # both methods currently do not apply aug but in the case this is applied  it will only be applied to the traingen
 # both calls use mode train
-trainGen = csv_image_generator(train_csv, images_folder, BATCH_SIZE, lb, mode="train", aug=None)
+trainGen = csv_image_generator(train_csv, images_folder, BATCH_SIZE, lb, mode="train", aug=dataAugmentaion)
 testGen = csv_image_generator(test_csv, images_folder, BATCH_SIZE, lb, mode="train")
 
 
@@ -305,7 +306,8 @@ model = model.build(img_size, img_size, 3, len(lb.classes_), stages, filters)
 
 # use of adam optimizer
 # accuracy is a good metric for classification tasks
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+optimizer = optimizers.Adam(lr=0.0001)
+model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 
 # train the network
 # trainGen yields batches of data and labels
