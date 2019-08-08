@@ -299,7 +299,7 @@ img_size = 224
 # Cross-entropy function calculates softmax internally so use output of model(...) directly
 # py_x = ResNet.ResNet.build(img_size, img_size, 3, num_classes, stages, filters)
 model = ResNet.ResNet()
-model = model.build(img_size, img_size, 3, len(lb.classes_), stages, filters)
+model = model.build(width=img_size, height=img_size, depth=3, classes=len(lb.classes_), stages=stages, filters=filters)
 
 # model.summary()
 # plot_model(model, to_file='mlp-mnist.png', show_shapes=True)
