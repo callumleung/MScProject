@@ -7,7 +7,7 @@ import pandas as pd
 
 #  resized_image_dir = pathlib.Path("E:\\Documents\\CompSci\\project\\trainset\\resized")
 train_csv = "train.csv"
-n_examples_file = "20_examples.csv"
+n_examples_file = "50_examples.csv"
 # batch_csv_file = "trainset\\resized\\trial_batch_ids.csv"
 
 # Get the number of images in the data set
@@ -74,7 +74,7 @@ def generate_csv_n_examples(min_number_examples, n_examples_csv, source_csv):
     # outfile.close()
 
 
-generate_csv_n_examples(20, n_examples_file, train_csv)
+generate_csv_n_examples(50, n_examples_file, train_csv)
 
 
 
