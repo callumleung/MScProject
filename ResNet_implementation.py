@@ -192,13 +192,13 @@ def get_classes(data_csv):
 
 
 # path to train csv
-train_csv = "20_examples_train.csv"
-test_csv = "20_examples_test.csv"
+train_csv = "50_examples_train.csv"
+test_csv = "50_examples_test.csv"
 images_folder = "train"
 
 # Define number of epochs and batch size
 NUM_EPOCHS = 75
-BATCH_SIZE = 8
+BATCH_SIZE = 16
 
 # Initialise number of training and test images
 NUM_TRAIN_IMAGES = 0
@@ -265,7 +265,7 @@ testGen = csv_image_generator(test_csv, images_folder, BATCH_SIZE, lb, mode="tra
 
 # num_classes = 52584  # remove hardcoded number, use unique values in reduced csv
 stages = (3, 4, 6)
-filters = (64, 128, 256, 512)
+filters = (64, 128, 256, 256)
 
 # Set parameters for learning
 # batch_size = 128
