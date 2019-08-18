@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 
-mixed_csv = pd.read_csv("20_examples.csv")
+mixed_csv = pd.read_csv("images_full.csv")
 
 # shuffle the list of images
 mixed_csv = mixed_csv.sample(frac=1).reset_index(drop=True)
@@ -16,6 +16,6 @@ train_df, test_df = train_test_split(mixed_csv, test_size=0.25)
 # test_df = mixed_csv.iloc[:, end_train_index:]
 
 
-train_df.to_csv("20_examples_train.csv", index=None)
-test_df.to_csv("20_examples_test.csv", index=None)
+train_df.to_csv("train.csv", index=None)
+test_df.to_csv("test.csv", index=None)
 

@@ -1,0 +1,18 @@
+Using TensorFlow backend.
+2019-08-12 14:54:44.519131: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1411] Found device 0 with properties: 
+name: Tesla K40m major: 3 minor: 5 memoryClockRate(GHz): 0.745
+pciBusID: 0000:81:00.0
+totalMemory: 11.17GiB freeMemory: 11.10GiB
+2019-08-12 14:54:44.519594: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1490] Adding visible gpu devices: 0
+2019-08-12 14:54:44.946901: I tensorflow/core/common_runtime/gpu/gpu_device.cc:971] Device interconnect StreamExecutor with strength 1 edge matrix:
+2019-08-12 14:54:44.946974: I tensorflow/core/common_runtime/gpu/gpu_device.cc:977]      0 
+2019-08-12 14:54:44.946986: I tensorflow/core/common_runtime/gpu/gpu_device.cc:990] 0:   N 
+2019-08-12 14:54:44.947169: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1103] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 10754 MB memory) -> physical GPU (device: 0, name: Tesla K40m, pci bus id: 0000:81:00.0, compute capability: 3.5)
+Traceback (most recent call last):
+  File "ResNet_implementation.py", line 346, in <module>
+    print(classification_report(testLabels.argmax(axis=1), predIdxs, target_names=lb.classes_))
+  File "/usr/lib64/python2.7/site-packages/sklearn/metrics/classification.py", line 1435, in classification_report
+    name_width = max(len(cn) for cn in target_names)
+  File "/usr/lib64/python2.7/site-packages/sklearn/metrics/classification.py", line 1435, in <genexpr>
+    name_width = max(len(cn) for cn in target_names)
+TypeError: object of type 'numpy.int64' has no len()

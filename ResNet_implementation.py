@@ -192,8 +192,8 @@ def get_classes(data_csv):
 
 
 # path to train csv
-train_csv = "50_examples_train.csv"
-test_csv = "50_examples_test.csv"
+train_csv = "20_examples_final.csv"
+test_csv = "test.csv"
 images_folder = "train"
 
 # Define number of epochs and batch size
@@ -227,14 +227,14 @@ testLabels = lb.transform(testLabels)
 #sample image constructor for data augmentation, not currently in use
 # performing data argumentation by training image generator
 # randomly rotates flips shears etc
-dataAugmentaion = image.ImageDataGenerator(rotation_range=30, zoom_range=0.20,
+dataAugmentation = image.ImageDataGenerator(rotation_range=30, zoom_range=0.20,
                                            fill_mode="nearest", shear_range=0.20, horizontal_flip=True,
                                            width_shift_range=0.1, height_shift_range=0.1)
 
 # initialsise training and testing image generators
 # both methods currently do not apply aug but in the case this is applied  it will only be applied to the traingen
 # both calls use mode train
-trainGen = csv_image_generator(train_csv, images_folder, BATCH_SIZE, lb, mode="train", aug=dataAugmentaion)
+trainGen = csv_image_generator(train_csv, images_folder, BATCH_SIZE, lb, mode="train", aug=None)
 testGen = csv_image_generator(test_csv, images_folder, BATCH_SIZE, lb, mode="train")
 
 
@@ -343,9 +343,11 @@ predIdxs = np.argmax(predIdxs, axis=1)
 
 # show classification report
 print("~~~~~~~~~Evaluating network~~~~~~~~~~~")
-print(classification_report(testLabels.argmax(axis=1), predIdxs, target_names=lb.classes_))
+# report = classification_report(testLabels.argmax(axis=1), predIdxs, target_names=lb.classes_)
+# report_dataframe = pd.DataFrame(report).transpose()
+# report_dataframe.to_csv(r'resnet_report_temp.csv')
 
-model.save("ResNet_trained_model_bs_32")
+model.save("ResNet_trained_model_temp_20")
 
 
 # plot the training loss and accuracy
