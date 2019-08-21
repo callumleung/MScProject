@@ -1,0 +1,20 @@
+Using TensorFlow backend.
+2019-08-19 11:34:41.065615: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1411] Found device 0 with properties: 
+name: Tesla K40m major: 3 minor: 5 memoryClockRate(GHz): 0.745
+pciBusID: 0000:81:00.0
+totalMemory: 11.17GiB freeMemory: 11.10GiB
+2019-08-19 11:34:41.066012: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1490] Adding visible gpu devices: 0
+2019-08-19 11:34:41.385110: I tensorflow/core/common_runtime/gpu/gpu_device.cc:971] Device interconnect StreamExecutor with strength 1 edge matrix:
+2019-08-19 11:34:41.385179: I tensorflow/core/common_runtime/gpu/gpu_device.cc:977]      0 
+2019-08-19 11:34:41.385190: I tensorflow/core/common_runtime/gpu/gpu_device.cc:990] 0:   N 
+2019-08-19 11:34:41.385339: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1103] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 10754 MB memory) -> physical GPU (device: 0, name: Tesla K40m, pci bus id: 0000:81:00.0, compute capability: 3.5)
+Traceback (most recent call last):
+  File "ResNet_implementation.py", line 342, in <module>
+    predIdxs = model.predict_generator(testGen, steps=(NUM_TEST_IMAGES//TEST_BATCH_SIZE)+1)
+  File "/usr/lib64/python2.7/site-packages/keras/legacy/interfaces.py", line 91, in wrapper
+    return func(*args, **kwargs)
+  File "/usr/lib64/python2.7/site-packages/keras/engine/training.py", line 1530, in predict_generator
+    verbose=verbose)
+  File "/usr/lib64/python2.7/site-packages/keras/engine/training_generator.py", line 457, in predict_generator
+    return np.concatenate(all_outs[0])
+MemoryError

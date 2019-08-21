@@ -192,13 +192,13 @@ def get_classes(data_csv):
 
 
 # path to train csv
-train_csv = "20_examples_final.csv"
+train_csv = "50_examples_final.csv"
 test_csv = "test.csv"
 images_folder = "train"
 
 # Define number of epochs and batch size
-NUM_EPOCHS = 75
-BATCH_SIZE = 16
+NUM_EPOCHS = 50
+BATCH_SIZE = 8
 
 # Initialise number of training and test images
 NUM_TRAIN_IMAGES = 0
@@ -234,7 +234,7 @@ dataAugmentation = image.ImageDataGenerator(rotation_range=30, zoom_range=0.20,
 # initialsise training and testing image generators
 # both methods currently do not apply aug but in the case this is applied  it will only be applied to the traingen
 # both calls use mode train
-trainGen = csv_image_generator(train_csv, images_folder, BATCH_SIZE, lb, mode="train", aug=None)
+trainGen = csv_image_generator(train_csv, images_folder, BATCH_SIZE, lb, mode="train", aug=dataAugmentation)
 testGen = csv_image_generator(test_csv, images_folder, BATCH_SIZE, lb, mode="train")
 
 
@@ -306,7 +306,7 @@ model = model.build(width=img_size, height=img_size, depth=3, classes=len(lb.cla
 
 # use of adam optimizer
 # accuracy is a good metric for classification tasks
-optimizer = optimizers.Adam(lr=0.0001)
+optimizer = optimizers.Adam(lr=0.001)
 model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 
 # train the network
@@ -319,7 +319,7 @@ model_history = model.fit_generator(trainGen,
                                     validation_steps=NUM_TEST_IMAGES//BATCH_SIZE,
                                     epochs=NUM_EPOCHS)
 #model_history = model.fit(images, labels, epochs=20, batch_size=batch_size)
-
+model.save("ResNet_trained_model_50_lr_001")
 # Plot training & validation accuracy values
 # from https://keras.io/visualization/
 # plt.plot(model_history.history['acc'])
@@ -335,19 +335,20 @@ model_history = model.fit_generator(trainGen,
 # TODO: change data and labels to test set
 # Evaluate the model
 # reinitialise the testGen this time in eval  mode
-testGen = csv_image_generator(test_csv, images_folder, BATCH_SIZE, lb, mode="eval", aug=None)
+TEST_BATCH_SIZE = BATCH_SIZE
+testGen = csv_image_generator(test_csv, images_folder, TEST_BATCH_SIZE, lb, mode="eval", aug=None)
 
 # make predicitions of test images finding the index of the label with the corresponding largest pred prob
-predIdxs = model.predict_generator(testGen, steps=(NUM_TEST_IMAGES//BATCH_SIZE)+1)
+predIdxs = model.predict_generator(testGen, steps=(NUM_TEST_IMAGES//TEST_BATCH_SIZE)+1)
 predIdxs = np.argmax(predIdxs, axis=1)
 
 # show classification report
 print("~~~~~~~~~Evaluating network~~~~~~~~~~~")
+print(predIdxs)
 # report = classification_report(testLabels.argmax(axis=1), predIdxs, target_names=lb.classes_)
 # report_dataframe = pd.DataFrame(report).transpose()
 # report_dataframe.to_csv(r'resnet_report_temp.csv')
 
-model.save("ResNet_trained_model_temp_20")
 
 
 # plot the training loss and accuracy
