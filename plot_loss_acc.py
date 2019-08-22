@@ -1,12 +1,19 @@
 import pandas as pd
 import numpy as np
+import os
 import matplotlib.pyplot as plt
 # first need to read in training output and grab the loss and acc values along with epoch and batch number
 
 # open file
-f = open("finished_runs/ResNet_train_gpu.sh.o1695486")
+file = "finished_runs/ResNet_train_gpu.sh.o1695330"
+f = open(file)
 g = f.readlines()
 f.close()
+
+run = file.split('.')[2]
+outDir = "E:\\Documents\\CompSci\\project python files\\plots\\{}".format(run)
+os.mkdir(outDir)
+
 
 epoch = 0
 batch = 0
@@ -43,24 +50,43 @@ for line in g:
         results.append([epoch, batch, loss, acc])
 
     if val_loss != 0 and val_acc != 0:
-        val_results.append([val_loss, val_acc])
+        val_results.append([val_loss, val_acc, epoch])
         val_loss = 0
         val_acc = 0
 
 
 results = pd.DataFrame(results, columns=['Epoch', 'Batch', 'Loss', 'Accuracy'])
-val_results = pd.DataFrame(val_results, columns=['val_loss', 'val_acc'])
+val_results = pd.DataFrame(val_results, columns=['val_loss', 'val_acc', 'Epoch'])
 val_results = val_results.astype(float)
 results = results.astype(float)
 # get current axis
-results.plot(kind='line', y='Loss')
-plt.show()
-results.plot(kind='line', y='Accuracy')
+plt.plot(results.Loss)
+plt.title('Training Loss')
+plt.xlabel('Iterations of training')
+plt.ylabel('Measured Loss')
+plt.savefig('{}\\{}'.format(outDir, 'train_loss'))
 plt.show()
 
-val_results.plot(y='val_loss')
+
+plt.plot(results.Accuracy)
+plt.title('Training Accuracy')
+plt.xlabel('Iterations of training')
+plt.ylabel('Measured Accuracy')
+plt.savefig('{}\\{}'.format(outDir, 'train_acc'))
 plt.show()
-val_results.plot(y='val_acc')
+
+plt.scatter(y=val_results['val_loss'], x=val_results['Epoch'])
+plt.title('Validation Loss')
+plt.xlabel('Epoch')
+plt.ylabel('Measured Loss')
+plt.savefig('{}\\{}'.format(outDir, 'val_loss'))
+plt.show()
+
+plt.scatter(y=val_results['val_acc'], x=val_results['Epoch'])
+plt.title('Validation Accuracy')
+plt.xlabel('Epoch')
+plt.ylabel('Measured Loss')
+plt.savefig('{}\\{}'.format(outDir, 'val_acc'))
 plt.show()
 
 #results.plot(kind='line', y='Accuracy')
