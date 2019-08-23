@@ -13,7 +13,7 @@ from keras.regularizers import l2
 from keras import backend as K
 import tensorflow as tf
 
-# https://towardsdatascience.com/implementing-a-resnet-model-from-scratch-971be7193718
+# based off  https://towardsdatascience.com/implementing-a-resnet-model-from-scratch-971be7193718
 
 
 class ResNet:

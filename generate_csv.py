@@ -42,11 +42,6 @@ def create_resized_batch_csv(csv_file, batch_dir, batch_csv_file):
     present_images.to_csv(batch_csv_file, index=None)
 
 
-# create_resized_batch_csv(csv_file, resized_image_dir, batch_csv_file)
-
-# batch_landmarks_ids = pd.read_csv(batch_csv_file)
-# batch_landmarks_ids.groupby('landmark_id').count()
-
 
 def generate_csv_n_examples(min_number_examples, n_examples_csv, source_csv):
     df_min_20 = pd.DataFrame()
